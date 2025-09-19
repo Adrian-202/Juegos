@@ -41,22 +41,22 @@ def jugar():
         try:
             pos = int(input("ELIGE UN NUMERO DISPONIBLE: ")) - 1
         except ValueError:
-            print("❌ Entrada inválida, usa solo números Disponibles.")
+            print(" Entrada inválida, usa solo números Disponibles.")
             continue
 
         if 0 <= pos < 9 and tablero[pos] not in ["X", "O"]:
             tablero[pos] = jugador_actual
         else:
-            print("❌ Movimiento inválido, intenta de nuevo.")
+            print(" Movimiento inválido, intenta de nuevo.")
             continue
 
         if hay_ganador():
             imprimir_tablero()
-            print(f"🎉 ¡Jugador {jugador_actual} ganó!")
+            print(f" ¡Jugador {jugador_actual} ganó!")
             break
         elif tablero_lleno():
             imprimir_tablero()
-            print("🤝 ¡Empate!")
+            print("Empate")
             break
         else:
             cambiar_jugador()
@@ -64,3 +64,5 @@ def jugar():
 
 if __name__ == "__main__":
     jugar()
+
+
