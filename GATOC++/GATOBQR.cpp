@@ -2,81 +2,95 @@
 #include <iostream>
 using namespace std;
 
-char tablero[3][3] = {
-    {'1', '2', '3'},
-    {'4', '5', '6'},
-    {'7', '8', '9'}
-};
+char board[3][3];
 
-char jugador = 'X';
-int movimiento;
-bool ganador = false;
+void initBoard() {
+    char c = '1';
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            board[i][j] = c++;
+}
 
-void mostrarTablero() {
+void printBoard() {
     cout << "\n";
-    cout << " " << tablero[0][0] << " | " << tablero[0][1] << " | " << tablero[0][2] << "\n";
-    cout << "---|---|---\n";
-    cout << " " << tablero[1][0] << " | " << tablero[1][1] << " | " << tablero[1][2] << "\n";
-    cout << "---|---|---\n";
-    cout << " " << tablero[2][0] << " | " << tablero[2][1] << " | " << tablero[2][2] << "\n";
+    for (int i = 0; i < 3; ++i) {
+        cout << " ";
+        for (int j = 0; j < 3; ++j) {
+            cout << board[i][j];
+            if (j < 2) cout << " | ";
+        }
+        cout << "\n";
+        if (i < 2) cout << "-----------\n";
+    }
+    cout << "\n";
 }
 
-bool verificarGanador() {
-
-    for (int i = 0; i < 3; i++) {
-        if (tablero[i][0] == tablero[i][1] && tablero[i][1] == tablero[i][2]) {
-            return true;
-        }
+char checkWinner() {
+    for (int i = 0; i < 3; ++i) {
+        if (board[i][0] == board[i][1] && board[i][1] == board[i][2])
+            return board[i][0];
+        if (board[0][i] == board[1][i] && board[1][i] == board[2][i])
+            return board[0][i];
     }
-
-    for (int i = 0; i < 3; i++) {
-        if (tablero[0][i] == tablero[1][i] && tablero[1][i] == tablero[2][i]) {
-            return true;
-        }
-    }
-
-    if (tablero[0][0] == tablero[1][1] && tablero[1][1] == tablero[2][2]) {
-        return true;
-    }
-    if (tablero[0][2] == tablero[1][1] && tablero[1][1] == tablero[2][0]) {
-        return true;
-    }
-    return false;
+    if (board[0][0] == board[1][1] && board[1][1] == board[2][2])
+        return board[0][0];
+    if (board[0][2] == board[1][1] && board[1][1] == board[2][0])
+        return board[0][2];
+    return ' ';
 }
 
-void jugar() {
-    while (!ganador) {
-        mostrarTablero();
-        cout << "Jugador " << jugador << ", ingrese el número de la casilla (1-9): ";
-        cin >> movimiento;
+bool isTie() {
+    for (int i = 0; i < 3; ++i)
+        for (int j = 0; j < 3; ++j)
+            if (board[i][j] >= '1' && board[i][j] <= '9')
+                return false;
+    return true;
+}
 
-        if (movimiento < 1 || movimiento > 9) {
-            cout << "Número inválido. Intenta nuevamente.\n";
-            continue;
-        }
-
-        int fila = (movimiento - 1) / 3;
-        int columna = (movimiento - 1) % 3;
-
-        if (tablero[fila][columna] == 'X' || tablero[fila][columna] == 'O') {
-            cout << "Casilla ya ocupada. Intenta nuevamente.\n";
-            continue;
-        }
-
-        tablero[fila][columna] = jugador;
-
-        if (verificarGanador()) {
-            mostrarTablero();
-            cout << "¡El jugador " << jugador << " ha ganado!\n";
-            ganador = true;
-        } else {
-            jugador = (jugador == 'X') ? 'O' : 'X';
-        }
-    }
+bool makeMove(int choice, char player) {
+    if (choice < 1 || choice > 9) return false;
+    int row = (choice - 1) / 3;
+    int col = (choice - 1) % 3;
+    if (board[row][col] == 'X' || board[row][col] == 'O') return false;
+    board[row][col] = player;
+    return true;
 }
 
 int main() {
-    cout << "Bienvenido al Juego del Gato \n";
-    jugar();
+    initBoard();
+    char current = 'X';
+    char winner = ' ';
+    cout << "Juego del GATO - jugador X y jugador O\n";
+    printBoard();
+
+    while (true) {
+        int move;
+        cout << "Turno de " << current << ". Elige casilla (1-9): ";
+        if (!(cin >> move)) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << "Entrada invalida.\n";
+            continue;
+        }
+        if (!makeMove(move, current)) {
+            cout << "Movimiento invalido.\n";
+            continue;
+        }
+        printBoard();
+        winner = checkWinner();
+        if (winner == 'X') {
+            cout << "Jugador X gana\n";
+            cout << "Jugador O pierde\n";
+            break;
+        } else if (winner == 'O') {
+            cout << "Jugador O gana\n";
+            cout << "Jugador X pierde\n";
+            break;
+        } else if (isTie()) {
+            cout << "Empate\n";
+            break;
+        }
+        current = (current == 'X') ? 'O' : 'X';
+    }
     return 0;
 }
