@@ -1,7 +1,3 @@
-// Archivo: Principal.java
-// Proyecto: Escape del Laberinto RPG
-// Autor: [Tu nombre]
-// Descripción: Juego tipo RPG con laberinto aleatorio, niveles, llaves, trampas y objetos
 
 import javax.swing.*;
 import java.awt.*;
@@ -349,3 +345,4 @@ class PanelJuego extends JPanel implements KeyListener {
     @Override public void keyReleased(KeyEvent e) {}
     @Override public void keyTyped(KeyEvent e) {}
 }
+
