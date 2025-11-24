@@ -190,9 +190,16 @@ function randomFree(){
 }
 
 function spawnFood(){ food=randomFree(); }
+
+/* ============================================================
+     NUEVA FUNCIÓN: minas que aumentan en cantidad con cada comida
+==============================================================*/
 function spawnTraps(){
-  traps=[];
-  for(let i=0;i<2;i++){
+  const extra = Math.floor(points / 10); // +1 mina por comida
+  const total = 2 + extra;
+
+  traps = [];
+  for(let i = 0; i < total; i++){
     traps.push(randomFree());
   }
 }
@@ -229,18 +236,14 @@ function step(){
   const head={...snake[0]};
   const newH={c:head.c + dir.dx, r:head.r + dir.dy};
 
-  /* ============================
-      TRASPASAR PAREDES
-  =============================*/
+  // TRASPASAR PAREDES
   if(newH.c < 0) newH.c = cols - 1;
   else if(newH.c >= cols) newH.c = 0;
 
   if(newH.r < 0) newH.r = rows - 1;
   else if(newH.r >= rows) newH.r = 0;
 
-  /* ============================
-      COLISIÓN CON SÍ MISMA
-  =============================*/
+  // COLISIÓN CON SÍ MISMA
   if(cellInSnake(newH.c,newH.r)){
     gameOver(); 
     return;
@@ -248,9 +251,13 @@ function step(){
 
   snake.unshift(newH);
 
+  /* ============================================================
+        COMER COMIDA → CAMBIAR Y AUMENTAR MINAS
+  ============================================================*/
   if(foodIs(newH.c,newH.r)){
-    points+=10;
+    points += 10;
     spawnFood();
+    spawnTraps();   // 🔥 CAMBIO PEDIDO
   }
   else if(trapIs(newH.c,newH.r)){
     points=Math.max(0,points-5);
@@ -259,14 +266,11 @@ function step(){
   }
   else snake.pop();
 
-  /* ============================
-        SUBIR DE NIVEL
-  =============================*/
+  // SUBIR DE NIVEL
   if (snake.length >= 15) {
       level++;
       fps++;
 
-      // Reducir tamaño suavemente a 5
       while (snake.length > initialSize) {
           snake.pop();
       }
